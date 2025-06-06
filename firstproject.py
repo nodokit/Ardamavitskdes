@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QTableWidgetItem)
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QTableWidgetItem, QMessageBox)
 from ui_mainwindoww import Ui_MainWindow
 
 class Budgetapp(QMainWindow, Ui_MainWindow):
@@ -22,13 +22,15 @@ class Budgetapp(QMainWindow, Ui_MainWindow):
         price_text = self.lineEdit_2.text().strip()
 
         if not item_name:
+            QMessageBox.warning(self, 'Error occurred!', 'Please, enter item name!')
             return
 
         try:
             price = float(price_text)
             if price < 0:
-                return
+                raise ValueError()
         except ValueError:
+            QMessageBox.warning(self, 'Error occurred!', 'Please, enter valid price!')
             return
 
         row = self.tableWidget.rowCount()
@@ -47,12 +49,12 @@ class Budgetapp(QMainWindow, Ui_MainWindow):
         try:
             budget = float(text)
             if budget < 0:
-                return
+                raise ValueError()
 
             self.lineEdit_4.setText(f"{budget:.2f}")
             self.lineEdit_3.clear()
         except ValueError:
-            return
+            QMessageBox.warning(self, 'Error occurred!', 'Please, enter valid budget!')
 
     def remove_selected(self):
         selected_rows = {item.row() for item in self.tableWidget.selectedItems()}
@@ -68,24 +70,13 @@ class Budgetapp(QMainWindow, Ui_MainWindow):
                 try:
                     total += float(price_item.text())
                 except ValueError:
-                    pass
+                    continue
 
-            self.lineEdit_5.setText(f"{total:.2f}")
+        self.lineEdit_5.setText(f"{total:.2f}")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     window = Budgetapp()
     window.show()
     sys.exit(app.exec_())
-
-
-
-
-
-
-
-
-
-
-
 
